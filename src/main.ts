@@ -60,12 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
     name: string;
     overhead: number;
     stack?: HeaderLayer[];
+    hidden?: boolean;
   }
 
   const PRESETS: OverheadPreset[] = [
     {
       name: 'Ethernet IPv4/TCP (≈3%)',
       overhead: 3,
+      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -75,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv6/TCP (≈4%)',
       overhead: 4,
+      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -84,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv4/UDP (≈2%)',
       overhead: 2,
+      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -93,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv6/UDP (≈3%)',
       overhead: 3,
+      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -136,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshPresetSelect(): void {
     presetSelect.innerHTML = '<option value="">Custom...</option>';
     PRESETS.forEach((p, i) => {
+      if (p.hidden) return;
       const opt = document.createElement('option');
       opt.value = String(i);
       opt.textContent = p.name;
