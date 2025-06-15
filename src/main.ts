@@ -42,21 +42,73 @@ document.addEventListener('DOMContentLoaded', () => {
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
+  const headerStackDiv = document.getElementById('header-stack') as HTMLDivElement;
   const calcBtn = document.getElementById('calculate-btn') as HTMLButtonElement;
   const resultDiv = document.getElementById('result') as HTMLDivElement;
   const themeToggleBtn = document.getElementById('theme-toggle-btn') as HTMLButtonElement;
 
+  interface HeaderLayer {
+    name: string;
+    bytes: number;
+  }
+
   interface OverheadPreset {
     name: string;
     overhead: number;
+    stack?: HeaderLayer[];
   }
 
   const PRESETS: OverheadPreset[] = [
-    { name: 'Ethernet IPv4/TCP (≈3%)', overhead: 3 },
-    { name: 'Ethernet IPv6/TCP (≈4%)', overhead: 4 },
-    { name: 'MPLS VPN (≈5%)', overhead: 5 },
-    { name: 'IPsec tunnel (≈12%)', overhead: 12 },
-    { name: 'L2TP/PPP with IPsec (≈20%)', overhead: 20 },
+    {
+      name: 'Ethernet IPv4/TCP (≈3%)',
+      overhead: 3,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'Ethernet IPv6/TCP (≈4%)',
+      overhead: 4,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv6', bytes: 40 },
+        { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'MPLS VPN (≈5%)',
+      overhead: 5,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'MPLS x2', bytes: 8 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'IPsec tunnel (≈12%)',
+      overhead: 12,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'IPsec', bytes: 50 },
+        { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'L2TP/PPP with IPsec (≈20%)',
+      overhead: 20,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'PPP', bytes: 8 },
+        { name: 'L2TP', bytes: 4 },
+        { name: 'IPsec', bytes: 50 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'TCP', bytes: 20 },
+      ],
+    },
   ];
 
   function refreshPresetSelect(): void {
@@ -69,11 +121,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function renderHeaderStack(stack: HeaderLayer[] | undefined): void {
+    headerStackDiv.innerHTML = '';
+    if (!stack) return;
+    stack.forEach((layer) => {
+      const div = document.createElement('div');
+      div.className = 'header-layer';
+      div.textContent = `${layer.name} (${layer.bytes}B)`;
+      headerStackDiv.appendChild(div);
+    });
+  }
+
   presetSelect.addEventListener('change', () => {
     const index = parseInt(presetSelect.value, 10);
     if (!isNaN(index) && PRESETS[index]) {
       const p = PRESETS[index];
       overheadInput.value = String(p.overhead);
+      renderHeaderStack(p.stack);
+    } else {
+      renderHeaderStack(undefined);
     }
   });
 
@@ -128,4 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTheme();
   bindThemeToggle();
   refreshPresetSelect();
+  renderHeaderStack(undefined);
 });
