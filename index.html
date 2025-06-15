@@ -27,6 +27,10 @@
                         <option value="MB" selected>MB</option>
                         <option value="GB">GB</option>
                         <option value="TB">TB</option>
+                        <option value="KiB">KiB</option>
+                        <option value="MiB">MiB</option>
+                        <option value="GiB">GiB</option>
+                        <option value="TiB">TiB</option>
                     </select>
                 </div>
                 <div id="size-help" class="sr-only">Enter file size and select unit.</div>
@@ -44,6 +48,16 @@
                     </select>
                 </div>
                 <div id="bandwidth-help" class="sr-only">Enter bandwidth and select unit.</div>
+            </div>
+            <div class="input-section">
+                <label for="overhead-input">Protocol overhead (%):</label>
+                <input type="number" id="overhead-input" placeholder="0" min="0" max="100" step="any" aria-describedby="overhead-help">
+                <div id="overhead-help" class="sr-only">Enter protocol overhead percentage.</div>
+            </div>
+            <div class="input-section" style="display: flex; gap: 10px; align-items: center;">
+                <select id="preset-select" style="flex:1;"></select>
+                <button id="save-preset-btn" class="convert-btn" style="flex:1;" aria-describedby="save-help">Save Preset</button>
+                <div id="save-help" class="sr-only">Save current values as preset</div>
             </div>
             <button id="calculate-btn" class="convert-btn" aria-describedby="calculate-help">Calculate</button>
             <div id="calculate-help" class="sr-only">Calculate transfer time</div>
