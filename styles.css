@@ -1,0 +1,165 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: #fff;
+  color: #000;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px;
+}
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  border: 4px solid #000;
+  padding: 20px;
+}
+header {
+  border-bottom: 4px solid #000;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+header h1 {
+  font-size: 2rem;
+}
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+input[type="number"],
+select,
+button {
+  width: 100%;
+  border: 4px solid #000;
+  padding: 10px;
+  font-size: 1rem;
+  background: transparent;
+  color: #000;
+  font-family: inherit;
+}
+.input-section {
+  margin-bottom: 20px;
+}
+/* Make inputs flexible and unit selects narrower in input sections */
+.input-section > div > input,
+.input-section > div > select {
+  width: auto;
+}
+.input-section > div > input {
+  flex: 1;
+}
+.input-section > div > select {
+  flex: 0 0 4rem;
+  width: 8rem;
+  min-width: 8rem;
+  max-width: 8rem;
+}
+/* Remove number input spinner arrows for cleaner text-box appearance */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+button {
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover {
+  background: #000;
+  color: #fff;
+}
+.results-section {
+  margin-top: 20px;
+  border-top: 4px solid #000;
+  padding-top: 10px;
+}
+.result-item {
+  margin-top: 20px;
+}
+.result-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+.result-item p {
+  padding: 10px;
+  border: 4px solid #000;
+  background: #fff;
+}
+/* Style for formula description below the result */
+.result-item .formula {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  font-style: italic;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.theme-toggle-btn {
+  width: auto;
+  margin-left: 10px;
+  border: 2px solid #000;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  background: transparent;
+  color: #000;
+  font-family: inherit;
+}
+@media (max-width: 600px) {
+  .container {
+    margin: 20px;
+    padding: 15px;
+  }
+  header h1 {
+    font-size: 1.5rem;
+  }
+}
+body.dark {
+  background: #000;
+  color: #fff;
+}
+body.dark .container,
+body.dark header {
+  border-color: #fff;
+}
+body.dark input[type="number"],
+body.dark select,
+body.dark button {
+  border-color: #fff;
+  background: #333;
+  color: #fff;
+}
+body.dark button:hover {
+  background: #fff;
+  color: #000;
+}
+/* Dark mode: make results section border visible */
+body.dark .results-section {
+  border-color: #fff;
+}
+/* Dark mode: style result output blocks */
+body.dark .result-item p:not(.formula) {
+  background: #333;
+  border-color: #fff;
+  color: #fff;
+}
