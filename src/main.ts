@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const ipVersionSelect = document.getElementById('ip-version-select') as HTMLSelectElement;
   const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
   const latencySection = document.getElementById('latency-section') as HTMLDivElement;
+  // Protocol and IP version selections are used for TCP handshake math
+  // and to set a default overhead when no preset is chosen.
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
   const headerStackDiv = document.getElementById('header-stack') as HTMLDivElement;

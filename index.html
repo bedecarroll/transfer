@@ -55,7 +55,7 @@
                     <option value="TCP" selected>TCP</option>
                     <option value="UDP">UDP</option>
                 </select>
-                <div id="protocol-help" class="sr-only">Choose TCP or UDP.</div>
+                <div id="protocol-help" class="sr-only">Choose TCP or UDP. TCP adds handshake time based on latency.</div>
             </div>
             <div class="input-section">
                 <label for="ip-version-select">IP Version:</label>
@@ -63,7 +63,7 @@
                     <option value="IPv4" selected>IPv4</option>
                     <option value="IPv6">IPv6</option>
                 </select>
-                <div id="ip-version-help" class="sr-only">Choose IPv4 or IPv6.</div>
+                <div id="ip-version-help" class="sr-only">Select IPv4 or IPv6 to set a default overhead when no preset is chosen.</div>
             </div>
             <div id="latency-section" class="input-section">
                 <label for="latency-input">Latency (ms):</label>
@@ -73,7 +73,7 @@
             <div class="input-section">
                 <label for="overhead-input">Protocol overhead (%):</label>
                 <input type="number" id="overhead-input" placeholder="0" min="0" max="100" step="any" aria-describedby="overhead-help">
-                <div id="overhead-help" class="sr-only">Enter protocol overhead percentage.</div>
+                <div id="overhead-help" class="sr-only">Enter protocol overhead percentage. Leave presets blank to use defaults from protocol and IP version.</div>
             </div>
             <div class="input-section" style="display: flex; gap: 10px; align-items: center;">
                 <label for="preset-select" class="sr-only">Overhead Preset</label>
