@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
-  const savePresetBtn = document.getElementById('save-preset-btn') as HTMLButtonElement;
   const calcBtn = document.getElementById('calculate-btn') as HTMLButtonElement;
   const resultDiv = document.getElementById('result') as HTMLDivElement;
   const themeToggleBtn = document.getElementById('theme-toggle-btn') as HTMLButtonElement;
@@ -56,23 +55,60 @@ document.addEventListener('DOMContentLoaded', () => {
     overhead: number;
   }
 
-  function getPresets(): Preset[] {
-    try {
-      const raw = localStorage.getItem('presets');
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function savePresets(presets: Preset[]): void {
-    localStorage.setItem('presets', JSON.stringify(presets));
-  }
+  const PRESETS: Preset[] = [
+    {
+      name: '1 MiB over 10 Mbps (Ethernet 2% overhead)',
+      size: 1,
+      sizeUnit: 'MiB',
+      bandwidth: 10,
+      bandwidthUnit: 'Mbps',
+      overhead: 2,
+    },
+    {
+      name: '100 MiB over 100 Mbps (Ethernet 2% overhead)',
+      size: 100,
+      sizeUnit: 'MiB',
+      bandwidth: 100,
+      bandwidthUnit: 'Mbps',
+      overhead: 2,
+    },
+    {
+      name: '1 GiB over 1 Gbps (Ethernet 2% overhead)',
+      size: 1,
+      sizeUnit: 'GiB',
+      bandwidth: 1,
+      bandwidthUnit: 'Gbps',
+      overhead: 2,
+    },
+    {
+      name: '500 MiB over 25 Mbps (Cable 5% overhead)',
+      size: 500,
+      sizeUnit: 'MiB',
+      bandwidth: 25,
+      bandwidthUnit: 'Mbps',
+      overhead: 5,
+    },
+    {
+      name: '5 GiB over 100 Mbps (VPN 10% overhead)',
+      size: 5,
+      sizeUnit: 'GiB',
+      bandwidth: 100,
+      bandwidthUnit: 'Mbps',
+      overhead: 10,
+    },
+    {
+      name: '50 GiB over 10 Gbps (Data center)',
+      size: 50,
+      sizeUnit: 'GiB',
+      bandwidth: 10,
+      bandwidthUnit: 'Gbps',
+      overhead: 2,
+    },
+  ];
 
   function refreshPresetSelect(): void {
-    const presets = getPresets();
     presetSelect.innerHTML = '<option value="">Custom...</option>';
-    presets.forEach((p, i) => {
+    PRESETS.forEach((p, i) => {
       const opt = document.createElement('option');
       opt.value = String(i);
       opt.textContent = p.name;
@@ -81,32 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   presetSelect.addEventListener('change', () => {
-    const presets = getPresets();
     const index = parseInt(presetSelect.value, 10);
-    if (!isNaN(index) && presets[index]) {
-      const p = presets[index];
+    if (!isNaN(index) && PRESETS[index]) {
+      const p = PRESETS[index];
       sizeInput.value = String(p.size);
       sizeUnit.value = p.sizeUnit;
       bwInput.value = String(p.bandwidth);
       bwUnit.value = p.bandwidthUnit;
       overheadInput.value = String(p.overhead);
     }
-  });
-
-  savePresetBtn.addEventListener('click', () => {
-    const name = prompt('Preset name?');
-    if (!name) return;
-    const presets = getPresets();
-    presets.push({
-      name,
-      size: parseFloat(sizeInput.value) || 0,
-      sizeUnit: sizeUnit.value,
-      bandwidth: parseFloat(bwInput.value) || 0,
-      bandwidthUnit: bwUnit.value,
-      overhead: parseFloat(overheadInput.value) || 0,
-    });
-    savePresets(presets);
-    refreshPresetSelect();
   });
 
   function showError(msg: string): void {
