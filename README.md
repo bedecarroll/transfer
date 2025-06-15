@@ -66,9 +66,32 @@ totalWithoutOverhead = handshakeSeconds + transferSeconds
 totalWithOverhead = handshakeSeconds + transferWithOverheadSeconds
 ```
 
-When a protocol overhead percentage (for example 3%) is provided, the bandwidth is
-multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time. Handshake
-time applies only to TCP and depends on the round-trip latency.
+When a protocol overhead percentage (for example 3%) is provided, the bandwidth
+is multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time.
+Handshake time applies only to TCP and depends on the round-trip latency.
+
+### Manual Calculation Example
+
+The following example demonstrates how you can verify the numbers manually.
+Assume a **1&nbsp;GB** file is sent over a **100&nbsp;Mbps** TCP link with
+**50&nbsp;ms** round-trip latency and **3&nbsp;%** protocol overhead:
+
+1. **Convert units**
+   - `sizeBits = 1 GB × 8 = 8,000,000,000`
+   - `bandwidthBps = 100 Mbps = 100,000,000`
+2. **Handshake time (TCP only)**
+   - `handshakeSeconds = 2 × 50 ms / 1000 = 0.1`
+3. **Effective bandwidth**
+   - `effectiveBandwidth = 100,000,000 × (1 - 3/100 = 0.97) = 97,000,000`
+4. **Without overhead**
+   - `transferSeconds = sizeBits ÷ bandwidthBps = 8,000,000,000 ÷ 100,000,000 = 80`
+   - `totalWithoutOverhead = handshakeSeconds + transferSeconds = 80.1`
+5. **With overhead**
+   - `transferWithOverheadSeconds = sizeBits ÷ effectiveBandwidth = 8,000,000,000 ÷ 97,000,000 ≈ 82.47`
+   - `totalWithOverhead = handshakeSeconds + transferWithOverheadSeconds ≈ 82.57`
+
+So the transfer takes about **80 seconds** without overhead and roughly
+**82.6 seconds** once overhead is applied.
 
  ## Project Structure
  - `index.html`: Main HTML template
