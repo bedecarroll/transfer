@@ -52,6 +52,24 @@ bandwidth and network protocol (TCP or UDP).
 6. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP or MPLS to override the automatic value.
 7. Click **Calculate** to see the estimated transfer time.
 
+## Formulas
+
+The calculation uses these formulas (sizes are converted to bits and bandwidth to bits per second):
+
+```
+handshakeSeconds = protocol == TCP ? 2 × latencyMs / 1000 : 0
+transferSeconds = (sizeBits) ÷ bandwidthBps
+effectiveBandwidth = bandwidthBps × (1 - overheadPercent / 100)
+transferWithOverheadSeconds = (sizeBits) ÷ effectiveBandwidth
+
+totalWithoutOverhead = handshakeSeconds + transferSeconds
+totalWithOverhead = handshakeSeconds + transferWithOverheadSeconds
+```
+
+When a protocol overhead percentage (for example 3%) is provided, the bandwidth is
+multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time. Handshake
+time applies only to TCP and depends on the round-trip latency.
+
  ## Project Structure
  - `index.html`: Main HTML template
  - `styles.css`: Application styling

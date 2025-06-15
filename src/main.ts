@@ -229,8 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeStrOverhead = secondsToTime(timeSecOverhead);
 
     const baseRaw = `(${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value})`;
-    const baseOverhead = `(${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100))`;
-    const handshakeFormula = protocol === 'TCP' ? `(2 × ${latencyVal}ms / 1000) + ` : '';
+    const overheadFactor = 1 - overheadVal / 100;
+    const baseOverhead = `(${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100 = ${overheadFactor.toFixed(2)}))`;
+    const handshakeFormula = protocol === 'TCP' ? `(2 × ${latencyVal}ms / 1000 = ${handshakeSec.toFixed(2)}s) + ` : '';
     const formulaRaw = `Formula: ${handshakeFormula}${baseRaw} = ${timeSecRaw.toFixed(2)} seconds`;
     const formulaOverhead = `Formula: ${handshakeFormula}${baseOverhead} = ${timeSecOverhead.toFixed(2)} seconds`;
 
