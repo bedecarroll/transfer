@@ -46,64 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultDiv = document.getElementById('result') as HTMLDivElement;
   const themeToggleBtn = document.getElementById('theme-toggle-btn') as HTMLButtonElement;
 
-  interface Preset {
+  interface OverheadPreset {
     name: string;
-    size: number;
-    sizeUnit: string;
-    bandwidth: number;
-    bandwidthUnit: string;
     overhead: number;
   }
 
-  const PRESETS: Preset[] = [
-    {
-      name: '1 MiB over 10 Mbps (Ethernet 2% overhead)',
-      size: 1,
-      sizeUnit: 'MiB',
-      bandwidth: 10,
-      bandwidthUnit: 'Mbps',
-      overhead: 2,
-    },
-    {
-      name: '100 MiB over 100 Mbps (Ethernet 2% overhead)',
-      size: 100,
-      sizeUnit: 'MiB',
-      bandwidth: 100,
-      bandwidthUnit: 'Mbps',
-      overhead: 2,
-    },
-    {
-      name: '1 GiB over 1 Gbps (Ethernet 2% overhead)',
-      size: 1,
-      sizeUnit: 'GiB',
-      bandwidth: 1,
-      bandwidthUnit: 'Gbps',
-      overhead: 2,
-    },
-    {
-      name: '500 MiB over 25 Mbps (Cable 5% overhead)',
-      size: 500,
-      sizeUnit: 'MiB',
-      bandwidth: 25,
-      bandwidthUnit: 'Mbps',
-      overhead: 5,
-    },
-    {
-      name: '5 GiB over 100 Mbps (VPN 10% overhead)',
-      size: 5,
-      sizeUnit: 'GiB',
-      bandwidth: 100,
-      bandwidthUnit: 'Mbps',
-      overhead: 10,
-    },
-    {
-      name: '50 GiB over 10 Gbps (Data center)',
-      size: 50,
-      sizeUnit: 'GiB',
-      bandwidth: 10,
-      bandwidthUnit: 'Gbps',
-      overhead: 2,
-    },
+  const PRESETS: OverheadPreset[] = [
+    { name: 'Ethernet IPv4/TCP (≈3%)', overhead: 3 },
+    { name: 'Ethernet IPv6/TCP (≈4%)', overhead: 4 },
+    { name: 'MPLS VPN (≈5%)', overhead: 5 },
+    { name: 'IPsec tunnel (≈12%)', overhead: 12 },
+    { name: 'L2TP/PPP with IPsec (≈20%)', overhead: 20 },
   ];
 
   function refreshPresetSelect(): void {
@@ -120,10 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const index = parseInt(presetSelect.value, 10);
     if (!isNaN(index) && PRESETS[index]) {
       const p = PRESETS[index];
-      sizeInput.value = String(p.size);
-      sizeUnit.value = p.sizeUnit;
-      bwInput.value = String(p.bandwidth);
-      bwUnit.value = p.bandwidthUnit;
       overheadInput.value = String(p.overhead);
     }
   });
