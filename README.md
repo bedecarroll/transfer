@@ -45,10 +45,11 @@ bandwidth and network protocol (TCP or UDP).
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
 4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds.
-5. Select the IP version (IPv4 or IPv6). When no overhead preset is chosen, the overhead field updates automatically for the chosen protocol and IP version.
-   The protocol and IP version inputs are also used to calculate the TCP handshake
-   when applicable and provide sensible defaults without needing to pick a preset.
-6. (Optional) Pick an overhead preset such as MPLS or IPsec to override the automatic value.
+5. Select the IP version (IPv4 or IPv6). When no overhead preset is selected, the overhead field updates automatically for the chosen protocol and IP version.
+   Changing either the protocol or IP version clears the preset selection so the
+   defaults take effect. The protocol and IP version inputs are also used to
+   calculate the TCP handshake when applicable.
+6. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP or MPLS to override the automatic value.
 7. Click **Calculate** to see the estimated transfer time.
 
  ## Project Structure

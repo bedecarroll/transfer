@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
   const latencySection = document.getElementById('latency-section') as HTMLDivElement;
   // Protocol and IP version selections are used for TCP handshake math
-  // and to set a default overhead when no preset is chosen.
+  // and to set a default overhead when no preset is chosen. Changing
+  // either will clear any selected preset so the automatic value updates.
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
   const headerStackDiv = document.getElementById('header-stack') as HTMLDivElement;
@@ -62,14 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
     name: string;
     overhead: number;
     stack?: HeaderLayer[];
-    hidden?: boolean;
   }
 
   const PRESETS: OverheadPreset[] = [
     {
       name: 'Ethernet IPv4/TCP (≈3%)',
       overhead: 3,
-      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -79,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv6/TCP (≈4%)',
       overhead: 4,
-      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -89,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv4/UDP (≈2%)',
       overhead: 2,
-      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -99,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Ethernet IPv6/UDP (≈3%)',
       overhead: 3,
-      hidden: true,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -143,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshPresetSelect(): void {
     presetSelect.innerHTML = '<option value="">Custom...</option>';
     PRESETS.forEach((p, i) => {
-      if (p.hidden) return;
       const opt = document.createElement('option');
       opt.value = String(i);
       opt.textContent = p.name;
@@ -194,10 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   protocolSelect.addEventListener('change', () => {
+    presetSelect.value = '';
     toggleLatencySection();
     updateDefaultOverhead();
   });
-  ipVersionSelect.addEventListener('change', updateDefaultOverhead);
+  ipVersionSelect.addEventListener('change', () => {
+    presetSelect.value = '';
+    updateDefaultOverhead();
+  });
 
   function showError(msg: string): void {
     resultDiv.innerHTML = `<div class="result-item"><h3>Error:</h3><p>${msg}</p></div>`;
