@@ -160,15 +160,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const bits = bytesToBits(sizeVal, sizeUnit.value);
-    const bps = bandwidthToBps(bwVal, bwUnit.value) * (1 - overheadVal / 100);
-    const timeSec = bits / bps;
-    const timeStr = secondsToTime(timeSec);
-    const formula = `Formula: (${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100)) = ${timeSec.toFixed(2)} seconds`;
+    const rawBps = bandwidthToBps(bwVal, bwUnit.value);
+    const timeSecRaw = bits / rawBps;
+    const bpsWithOverhead = rawBps * (1 - overheadVal / 100);
+    const timeSecOverhead = bits / bpsWithOverhead;
+
+    const timeStrRaw = secondsToTime(timeSecRaw);
+    const timeStrOverhead = secondsToTime(timeSecOverhead);
+
+    const formulaRaw = `Formula: (${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value}) = ${timeSecRaw.toFixed(2)} seconds`;
+    const formulaOverhead = `Formula: (${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100)) = ${timeSecOverhead.toFixed(2)} seconds`;
+
     resultDiv.innerHTML = `
       <div class="result-item">
-        <h3>Estimated Transfer Time:</h3>
-        <p>${timeStr}</p>
-        <p class="formula">${formula}</p>
+        <h3>Transfer Time Without Overhead:</h3>
+        <p>${timeStrRaw}</p>
+        <p class="formula">${formulaRaw}</p>
+      </div>
+      <div class="result-item">
+        <h3>Transfer Time With Overhead:</h3>
+        <p>${timeStrOverhead}</p>
+        <p class="formula">${formulaOverhead}</p>
       </div>`;
   });
 
