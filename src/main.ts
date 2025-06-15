@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const sizeUnit = document.getElementById('size-unit') as HTMLSelectElement;
   const bwInput = document.getElementById('bandwidth-input') as HTMLInputElement;
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
+  const protocolSelect = document.getElementById('protocol-select') as HTMLSelectElement;
+  const ipVersionSelect = document.getElementById('ip-version-select') as HTMLSelectElement;
+  const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
+  const latencySection = document.getElementById('latency-section') as HTMLDivElement;
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
   const headerStackDiv = document.getElementById('header-stack') as HTMLDivElement;
@@ -75,6 +79,24 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
         { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'Ethernet IPv4/UDP (≈2%)',
+      overhead: 2,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'UDP', bytes: 8 },
+      ],
+    },
+    {
+      name: 'Ethernet IPv6/UDP (≈3%)',
+      overhead: 3,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv6', bytes: 40 },
+        { name: 'UDP', bytes: 8 },
       ],
     },
     {
@@ -140,8 +162,34 @@ document.addEventListener('DOMContentLoaded', () => {
       renderHeaderStack(p.stack);
     } else {
       renderHeaderStack(undefined);
+      updateDefaultOverhead();
     }
   });
+
+  function updateDefaultOverhead(): void {
+    if (presetSelect.value !== '') return;
+    const isIPv6 = ipVersionSelect.value === 'IPv6';
+    const isTCP = protocolSelect.value === 'TCP';
+    const presetName = `Ethernet ${isIPv6 ? 'IPv6' : 'IPv4'}/${isTCP ? 'TCP' : 'UDP'}`;
+    const preset = PRESETS.find((p) => p.name.startsWith(presetName));
+    if (preset) {
+      overheadInput.value = String(preset.overhead);
+      renderHeaderStack(preset.stack);
+    } else {
+      renderHeaderStack(undefined);
+    }
+  }
+
+  function toggleLatencySection(): void {
+    const isTCP = protocolSelect.value === 'TCP';
+    latencySection.style.display = isTCP ? 'block' : 'none';
+  }
+
+  protocolSelect.addEventListener('change', () => {
+    toggleLatencySection();
+    updateDefaultOverhead();
+  });
+  ipVersionSelect.addEventListener('change', updateDefaultOverhead);
 
   function showError(msg: string): void {
     resultDiv.innerHTML = `<div class="result-item"><h3>Error:</h3><p>${msg}</p></div>`;
@@ -150,6 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
   calcBtn.addEventListener('click', () => {
     const sizeVal = parseFloat(sizeInput.value);
     const bwVal = parseFloat(bwInput.value);
+    const protocol = protocolSelect.value;
+    const latencyVal = parseFloat(latencyInput.value) || 0;
     const overheadVal = parseFloat(overheadInput.value) || 0;
     if (isNaN(sizeVal) || sizeVal <= 0) {
       showError('Please enter a valid file size');
@@ -161,15 +211,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const bits = bytesToBits(sizeVal, sizeUnit.value);
     const rawBps = bandwidthToBps(bwVal, bwUnit.value);
-    const timeSecRaw = bits / rawBps;
+    const dataSecRaw = bits / rawBps;
     const bpsWithOverhead = rawBps * (1 - overheadVal / 100);
-    const timeSecOverhead = bits / bpsWithOverhead;
+    const dataSecOverhead = bits / bpsWithOverhead;
+    const handshakeSec = protocol === 'TCP' ? (latencyVal / 1000) * 2 : 0;
+    const timeSecRaw = handshakeSec + dataSecRaw;
+    const timeSecOverhead = handshakeSec + dataSecOverhead;
 
     const timeStrRaw = secondsToTime(timeSecRaw);
     const timeStrOverhead = secondsToTime(timeSecOverhead);
 
-    const formulaRaw = `Formula: (${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value}) = ${timeSecRaw.toFixed(2)} seconds`;
-    const formulaOverhead = `Formula: (${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100)) = ${timeSecOverhead.toFixed(2)} seconds`;
+    const baseRaw = `(${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value})`;
+    const baseOverhead = `(${sizeVal}${sizeUnit.value} × 8) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100))`;
+    const handshakeFormula = protocol === 'TCP' ? `(2 × ${latencyVal}ms / 1000) + ` : '';
+    const formulaRaw = `Formula: ${handshakeFormula}${baseRaw} = ${timeSecRaw.toFixed(2)} seconds`;
+    const formulaOverhead = `Formula: ${handshakeFormula}${baseOverhead} = ${timeSecOverhead.toFixed(2)} seconds`;
 
     resultDiv.innerHTML = `
       <div class="result-item">
@@ -207,4 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
   bindThemeToggle();
   refreshPresetSelect();
   renderHeaderStack(undefined);
+  toggleLatencySection();
+  updateDefaultOverhead();
 });

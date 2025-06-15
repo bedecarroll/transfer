@@ -1,6 +1,7 @@
  # Transfer Time Calculator
 
- A simple static website for calculating theoretical transfer times based on file size and bandwidth.
+A simple static website for calculating theoretical transfer times based on file size,
+bandwidth and network protocol (TCP or UDP).
 
  ## Prerequisites
  - bun (>=0.6.0) or Node.js (>=14)
@@ -40,10 +41,12 @@
  ```
 
  ## Usage
- 1. Open the web UI in your browser.
- 2. Enter a file size and select its unit.
- 3. Enter a bandwidth value and select its unit.
- 4. Click **Calculate** to see the estimated transfer time.
+1. Open the web UI in your browser.
+2. Enter a file size and select its unit.
+3. Enter a bandwidth value and select its unit.
+4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds.
+5. Select the IP version (IPv4 or IPv6) to account for header differences.
+6. Click **Calculate** to see the estimated transfer time.
 
  ## Project Structure
  - `index.html`: Main HTML template
