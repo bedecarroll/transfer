@@ -1,6 +1,6 @@
  # Agents
 
- This document describes the available function agents for language-model integrations. Each agent represents a tool the LLM can call to perform specific tasks.
+This document describes the available function agents for language-model integrations. Each agent represents a tool the LLM can call to perform specific tasks. The agent definitions live only in this file; there is no separate `src/agent.ts` module.
 
  ## calculate_transfer_time
  - **Description**: Calculate theoretical transfer time given a file size and bandwidth.

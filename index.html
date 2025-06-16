@@ -57,29 +57,32 @@
                 </select>
                 <div id="protocol-help" class="sr-only">Choose TCP or UDP. For TCP, enter latency to include handshake time in the total.</div>
             </div>
-            <div class="input-section">
-                <label for="ip-version-select">IP Version:</label>
-                <select id="ip-version-select" aria-describedby="ip-version-help">
-                    <option value="IPv4" selected>IPv4</option>
-                    <option value="IPv6">IPv6</option>
-                </select>
-                <div id="ip-version-help" class="sr-only">Select IPv4 or IPv6. Changing this or the protocol resets the preset and applies the default overhead.</div>
-            </div>
             <div id="latency-section" class="input-section">
                 <label for="latency-input">Latency (ms):</label>
                 <input type="number" id="latency-input" placeholder="0" min="0" step="any" aria-describedby="latency-help">
                 <div id="latency-help" class="sr-only">Round-trip latency for TCP in milliseconds.</div>
             </div>
-            <div class="input-section">
-                <label for="overhead-input">Protocol overhead (%):</label>
-                <input type="number" id="overhead-input" placeholder="0" min="0" max="100" step="any" aria-describedby="overhead-help">
-                <div id="overhead-help" class="sr-only">Enter protocol overhead percentage. Switching protocol or IP version clears the preset so defaults apply.</div>
-            </div>
-            <div class="input-section" style="display: flex; gap: 10px; align-items: center;">
-                <label for="preset-select" class="sr-only">Overhead Preset</label>
-                <select id="preset-select" style="flex:1;"></select>
-            </div>
-            <div id="header-stack" class="header-stack" aria-live="polite"></div>
+            <details id="advanced-section">
+                <summary>Advanced Options</summary>
+                <div class="input-section">
+                    <label for="ip-version-select">IP Version:</label>
+                    <select id="ip-version-select" aria-describedby="ip-version-help">
+                        <option value="IPv4" selected>IPv4</option>
+                        <option value="IPv6">IPv6</option>
+                    </select>
+                    <div id="ip-version-help" class="sr-only">Select IPv4 or IPv6. Changing this or the protocol resets the preset and applies the default overhead.</div>
+                </div>
+                <div class="input-section">
+                    <label for="overhead-input">Protocol overhead (%):</label>
+                    <input type="number" id="overhead-input" placeholder="0" min="0" max="100" step="any" aria-describedby="overhead-help">
+                    <div id="overhead-help" class="sr-only">Enter protocol overhead percentage. Switching protocol or IP version clears the preset so defaults apply.</div>
+                </div>
+                <div class="input-section" style="display: flex; gap: 10px; align-items: center;">
+                    <label for="preset-select" class="sr-only">Overhead Preset</label>
+                    <select id="preset-select" style="flex:1;"></select>
+                </div>
+                <div id="header-stack" class="header-stack" aria-live="polite"></div>
+            </details>
             <button id="calculate-btn" class="convert-btn" aria-describedby="calculate-help">Calculate</button>
             <div id="calculate-help" class="sr-only">Calculate transfer time</div>
             <div id="result" class="results-section"></div>
