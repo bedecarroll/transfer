@@ -107,6 +107,7 @@ So the transfer takes about **80 seconds** without overhead and roughly
  - `styles.css`: Application styling
  - `src/main.ts`: Core application logic
  - `public/`: Build output (static assets)
+ - `AGENTS.md`: Describes the `calculate_transfer_time` function agent for LLM integrations. This agent is specified solely in the document and does not have a corresponding `src/agent.ts` file.
 
  ## License
  This project is licensed under the [MIT License](LICENSE).
