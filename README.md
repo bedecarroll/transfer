@@ -44,7 +44,7 @@ bandwidth and network protocol (TCP or UDP).
 1. Open the web UI in your browser.
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
-4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds.
+4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds. When TCP is used the page displays the calculated handshake time in the results.
 5. Select the IP version (IPv4 or IPv6). When no overhead preset is selected, the overhead field updates automatically for the chosen protocol and IP version.
    Changing either the protocol or IP version clears the preset selection so the
    defaults take effect. The protocol and IP version inputs are also used to
@@ -54,17 +54,22 @@ bandwidth and network protocol (TCP or UDP).
 
 ## Formulas
 
-The calculation uses these formulas (sizes are converted to bits and bandwidth to bits per second):
+The calculation uses the following formulas. In these expressions all file sizes are converted to **bits (b)** and all bandwidth values to **bits per second (b/s)**:
 
 ```
-handshakeSeconds = protocol == TCP ? 2 × latencyMs / 1000 : 0
-transferSeconds = (sizeBits) ÷ bandwidthBps
-effectiveBandwidth = bandwidthBps × (1 - overheadPercent / 100)
-transferWithOverheadSeconds = (sizeBits) ÷ effectiveBandwidth
+sizeBits (b) = fileSize × 8
+bandwidthBps (b/s) = bandwidth
+handshakeSeconds (s) = protocol == TCP ? 2 × latencyMilliseconds (ms) / 1000 : 0
+transferSeconds (s) = sizeBits (b) ÷ bandwidthBps (b/s)
+effectiveBandwidth (b/s) = bandwidthBps (b/s) × (1 - overheadPercent / 100)
+transferWithOverheadSeconds (s) = sizeBits (b) ÷ effectiveBandwidth (b/s)
 
-totalWithoutOverhead = handshakeSeconds + transferSeconds
-totalWithOverhead = handshakeSeconds + transferWithOverheadSeconds
+totalWithoutOverhead (s) = handshakeSeconds (s) + transferSeconds (s)
+totalWithOverhead (s) = handshakeSeconds (s) + transferWithOverheadSeconds (s)
 ```
+
+The generic forms above show the units for each term. ``latencyMilliseconds`` is provided by the user in **ms** and the resulting ``handshakeSeconds`` is in **seconds**. The overhead percentage reduces available bandwidth by the factor ``(1 - overheadPercent / 100)`` before computing the transfer duration.
+
 
 When a protocol overhead percentage (for example 3%) is provided, the bandwidth
 is multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time.
