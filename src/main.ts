@@ -268,6 +268,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const helpIcon = (desc: string) => `<span class="help-icon" title="${desc}">?</span>`;
 
     resultDiv.innerHTML = `
+      <div class="result-item primary-result">
+        <h3>Minimum Transfer Time: ${helpIcon('File size divided by expected maximum throughput.')}</h3>
+        <p>${timeStrExpected}</p>
+        <p class="formula">${formulaMinTime} = ${timeSecExpected.toFixed(2)} seconds</p>
+      </div>
       <div class="result-item">
         <h3>Transfer Time Without Overhead: ${helpIcon('Simple transfer time without protocol overhead or handshake.')}</h3>
         <p>${timeStrRaw}</p>
@@ -307,11 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Expected Maximum TCP Throughput: ${helpIcon('Minimum of bandwidth, overhead, loss (Mathis) and window limits.')}</h3>
         <p>${fmtMbps(expectedBps)}</p>
         <p class="formula">${formulaExpectedBps}</p>
-      </div>
-      <div class="result-item">
-        <h3>Minimum Transfer Time: ${helpIcon('File size divided by expected maximum throughput.')}</h3>
-        <p>${timeStrExpected}</p>
-        <p class="formula">${formulaMinTime} = ${timeSecExpected.toFixed(2)} seconds</p>
       </div>`;
   });
 

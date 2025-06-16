@@ -51,7 +51,7 @@ bandwidth and network protocol (TCP or UDP). Hover over the question mark icons 
    calculate the TCP handshake when applicable.
 6. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP or MPLS to override the automatic value.
 7. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
-8. Click **Calculate** to see the estimated transfer time and metrics.
+8. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
 9. Hover over the question mark icons next to each result for an explanation of what the metric represents.
 
 ## Formulas

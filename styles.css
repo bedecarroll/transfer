@@ -95,6 +95,12 @@ button:hover {
   border: 4px solid #000;
   background: #fff;
 }
+.primary-result h3 {
+  font-size: 1.4rem;
+}
+.primary-result p {
+  font-weight: bold;
+}
 /* Style for formula description below the result */
 .result-item .formula {
   margin-top: 5px;
