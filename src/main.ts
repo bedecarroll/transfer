@@ -269,47 +269,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resultDiv.innerHTML = `
       <div class="result-item">
-        <h3>Transfer Time Without Overhead: ${helpIcon('Time to transfer ignoring protocol overhead and handshake.')}</h3>
+        <h3>Transfer Time Without Overhead: ${helpIcon('Simple transfer time without protocol overhead or handshake.')}</h3>
         <p>${timeStrRaw}</p>
         <p class="formula">${formulaRaw}</p>
       </div>
       <div class="result-item">
-        <h3>Transfer Time With Overhead: ${helpIcon('Time including protocol overhead and handshake delay.')}</h3>
+        <h3>Transfer Time With Overhead: ${helpIcon('Transfer time including protocol overhead and handshake delay.')}</h3>
         <p>${timeStrOverhead}</p>
         <p class="formula">${formulaOverhead}</p>
       </div>
       <div class="result-item">
-        <h3>Bandwidth-Delay Product: ${helpIcon('Amount of data that can fill the link based on bandwidth and latency.')}</h3>
+        <h3>Bandwidth-Delay Product: ${helpIcon('Bandwidth-Delay Product (BDP) = bandwidth × latency.')}</h3>
         <p>${bdpBits.toLocaleString()} bits (${bdpBytes.toLocaleString()} bytes)</p>
         <p class="formula">Formula: ${bwVal}${bwUnit.value} × ${latencyVal}ms / 1000 = ${bdpBits.toFixed(0)} bits</p>
       </div>
       <div class="result-item">
-        <h3>Minimum TCP Window Size: ${helpIcon('Smallest receive window to fully utilize the link.')}</h3>
+        <h3>Minimum TCP Window Size: ${helpIcon('Minimum TCP Receive Window (BDP / 8).')}</h3>
         <p>${bdpBytes.toLocaleString()} bytes</p>
         <p class="formula">Formula: ${bdpBits.toFixed(0)} bits ÷ 8 = ${bdpBytes.toFixed(0)} bytes</p>
       </div>
       <div class="result-item">
-        <h3>Max TCP Throughput with Overhead: ${helpIcon('Bandwidth available after subtracting protocol overhead.')}</h3>
+        <h3>Max TCP Throughput with Overhead: ${helpIcon('Effective Bandwidth after subtracting protocol overhead.')}</h3>
         <p>${fmtMbps(maxOverheadBps)}</p>
         <p class="formula">${formulaOverheadBps}</p>
       </div>
       <div class="result-item">
-        <h3>Max TCP Throughput Limited by Packet Loss: ${helpIcon('Theoretical limit based on packet loss probability.')}</h3>
+        <h3>Max TCP Throughput Limited by Packet Loss: ${helpIcon('Mathis et al. loss-based throughput formula.')}</h3>
         <p>${fmtMbps(lossBps)}</p>
         <p class="formula">${formulaLossBps}</p>
       </div>
       <div class="result-item">
-        <h3>Max TCP Throughput Limited by TCP Window: ${helpIcon('Limit imposed by the configured TCP receive window size.')}</h3>
+        <h3>Max TCP Throughput Limited by TCP Window: ${helpIcon('Throughput limited by TCP receive window (rwnd / RTT).')}</h3>
         <p>${fmtMbps(rwndBps)}</p>
         <p class="formula">${formulaRwndBps}</p>
       </div>
       <div class="result-item">
-        <h3>Expected Maximum TCP Throughput: ${helpIcon('Overall throughput limited by bandwidth, overhead, loss and window.')}</h3>
+        <h3>Expected Maximum TCP Throughput: ${helpIcon('Minimum of bandwidth, overhead, loss (Mathis) and window limits.')}</h3>
         <p>${fmtMbps(expectedBps)}</p>
         <p class="formula">${formulaExpectedBps}</p>
       </div>
       <div class="result-item">
-        <h3>Minimum Transfer Time: ${helpIcon('Shortest possible time using the expected maximum throughput.')}</h3>
+        <h3>Minimum Transfer Time: ${helpIcon('File size divided by expected maximum throughput.')}</h3>
         <p>${timeStrExpected}</p>
         <p class="formula">${formulaMinTime} = ${timeSecExpected.toFixed(2)} seconds</p>
       </div>`;
