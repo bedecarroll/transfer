@@ -48,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // and to set a default overhead when no preset is chosen. Changing
   // either will clear any selected preset so the automatic value updates.
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
+  const lossInput = document.getElementById('loss-input') as HTMLInputElement;
+  const rwndInput = document.getElementById('rwnd-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
   const headerStackDiv = document.getElementById('header-stack') as HTMLDivElement;
   const calcBtn = document.getElementById('calculate-btn') as HTMLButtonElement;
@@ -208,6 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const protocol = protocolSelect.value;
     const latencyVal = parseFloat(latencyInput.value) || 0;
     const overheadVal = parseFloat(overheadInput.value) || 0;
+    const lossVal = parseFloat(lossInput.value) || 0;
+    const rwndVal = parseFloat(rwndInput.value) || 0;
     if (isNaN(sizeVal) || sizeVal <= 0) {
       showError('Please enter a valid file size');
       return;
@@ -225,11 +229,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const handshakeSec = protocol === 'TCP' ? rttSec * 2 : 0;
     const bdpBits = rawBps * rttSec;
     const bdpBytes = bdpBits / 8;
+    const lossRate = lossVal / 100;
+    const MSS_BYTES = 1460;
+    const lossBps = lossRate > 0 ? 1.22 * (MSS_BYTES * 8) / (rttSec * Math.sqrt(lossRate)) : Infinity;
+    const rwndBps = rwndVal > 0 && rttSec > 0 ? (rwndVal * 8) / rttSec : Infinity;
+    const maxOverheadBps = bpsWithOverhead;
+    const expectedBps = Math.min(rawBps, maxOverheadBps, lossBps, rwndBps);
     const timeSecRaw = handshakeSec + dataSecRaw;
     const timeSecOverhead = handshakeSec + dataSecOverhead;
+    const timeSecExpected = bits / expectedBps;
 
     const timeStrRaw = secondsToTime(timeSecRaw);
     const timeStrOverhead = secondsToTime(timeSecOverhead);
+    const timeStrExpected = secondsToTime(timeSecExpected);
 
     const baseRaw = `(${sizeVal}${sizeUnit.value} × 8b/B) ÷ (${bwVal}${bwUnit.value})`;
     const overheadFactor = 1 - overheadVal / 100;
@@ -239,6 +251,19 @@ document.addEventListener('DOMContentLoaded', () => {
       : '';
     const formulaRaw = `Formula: ${handshakeFormula}${baseRaw} = ${timeSecRaw.toFixed(2)} seconds`;
     const formulaOverhead = `Formula: ${handshakeFormula}${baseOverhead} = ${timeSecOverhead.toFixed(2)} seconds`;
+    const formulaOverheadBps = `Formula: ${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100 = ${overheadFactor.toFixed(2)})`;
+    const formulaLossBps = lossRate > 0
+      ? `Formula: 1.22 × 1460 × 8 ÷ (${latencyVal}ms / 1000 × sqrt(${lossRate.toFixed(5)}))`
+      : 'Formula: Unlimited (no loss)';
+    const formulaRwndBps = rwndVal > 0 && rttSec > 0
+      ? `Formula: ${rwndVal} × 8 ÷ ${rttSec.toFixed(3)}s`
+      : 'Formula: Unlimited';
+    const formulaExpectedBps = `Formula: min(${rawBps.toFixed(0)}, ${maxOverheadBps.toFixed(0)}, ${lossBps === Infinity ? '∞' : lossBps.toFixed(0)}, ${rwndBps === Infinity ? '∞' : rwndBps.toFixed(0)}) = ${expectedBps.toFixed(0)}`;
+    const formulaMinTime = `Formula: ${bits} ÷ ${expectedBps.toFixed(0)}`;
+
+    function fmtMbps(bps: number): string {
+      return bps === Infinity ? 'Unlimited' : (bps / 1e6).toFixed(3) + ' Mbps';
+    }
 
     resultDiv.innerHTML = `
       <div class="result-item">
@@ -260,6 +285,31 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Minimum TCP Window Size:</h3>
         <p>${bdpBytes.toLocaleString()} bytes</p>
         <p class="formula">Formula: ${bdpBits.toFixed(0)} bits ÷ 8 = ${bdpBytes.toFixed(0)} bytes</p>
+      </div>
+      <div class="result-item">
+        <h3>Max TCP Throughput with Overhead:</h3>
+        <p>${fmtMbps(maxOverheadBps)}</p>
+        <p class="formula">${formulaOverheadBps}</p>
+      </div>
+      <div class="result-item">
+        <h3>Max TCP Throughput Limited by Packet Loss:</h3>
+        <p>${fmtMbps(lossBps)}</p>
+        <p class="formula">${formulaLossBps}</p>
+      </div>
+      <div class="result-item">
+        <h3>Max TCP Throughput Limited by TCP Window:</h3>
+        <p>${fmtMbps(rwndBps)}</p>
+        <p class="formula">${formulaRwndBps}</p>
+      </div>
+      <div class="result-item">
+        <h3>Expected Maximum TCP Throughput:</h3>
+        <p>${fmtMbps(expectedBps)}</p>
+        <p class="formula">${formulaExpectedBps}</p>
+      </div>
+      <div class="result-item">
+        <h3>Minimum Transfer Time:</h3>
+        <p>${timeStrExpected}</p>
+        <p class="formula">${formulaMinTime} = ${timeSecExpected.toFixed(2)} seconds</p>
       </div>`;
   });
 
