@@ -49,21 +49,21 @@
                 </div>
                 <div id="bandwidth-help" class="sr-only">Enter bandwidth and select unit.</div>
             </div>
-            <div class="input-section">
-                <label for="protocol-select">Protocol:</label>
-                <select id="protocol-select" aria-describedby="protocol-help">
-                    <option value="TCP" selected>TCP</option>
-                    <option value="UDP">UDP</option>
-                </select>
-                <div id="protocol-help" class="sr-only">Choose TCP or UDP. For TCP, enter latency to include handshake time in the total.</div>
-            </div>
-            <div id="latency-section" class="input-section">
-                <label for="latency-input">Latency (ms):</label>
-                <input type="number" id="latency-input" placeholder="0" min="0" step="any" aria-describedby="latency-help">
-                <div id="latency-help" class="sr-only">Round-trip latency for TCP in milliseconds.</div>
-            </div>
             <details id="advanced-section">
                 <summary>Advanced Options</summary>
+                <div class="input-section">
+                    <label for="protocol-select">Protocol:</label>
+                    <select id="protocol-select" aria-describedby="protocol-help">
+                        <option value="TCP" selected>TCP</option>
+                        <option value="UDP">UDP</option>
+                    </select>
+                    <div id="protocol-help" class="sr-only">Choose TCP or UDP. For TCP, enter latency to include handshake time in the total.</div>
+                </div>
+                <div id="latency-section" class="input-section">
+                    <label for="latency-input">Latency (ms):</label>
+                    <input type="number" id="latency-input" value="10" min="0" step="any" aria-describedby="latency-help">
+                    <div id="latency-help" class="sr-only">Round-trip latency for TCP in milliseconds.</div>
+                </div>
                 <div class="input-section">
                     <label for="ip-version-select">IP Version:</label>
                     <select id="ip-version-select" aria-describedby="ip-version-help">
