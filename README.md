@@ -44,7 +44,7 @@ bandwidth and network protocol (TCP or UDP).
 1. Open the web UI in your browser.
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
-4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds. When TCP is used the page displays the calculated handshake time in the results.
+4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds so handshake time is added to the total transfer time.
 5. Select the IP version (IPv4 or IPv6). When no overhead preset is selected, the overhead field updates automatically for the chosen protocol and IP version.
    Changing either the protocol or IP version clears the preset selection so the
    defaults take effect. The protocol and IP version inputs are also used to

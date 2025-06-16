@@ -231,20 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseRaw = `(${sizeVal}${sizeUnit.value} × 8b/B) ÷ (${bwVal}${bwUnit.value})`;
     const overheadFactor = 1 - overheadVal / 100;
     const baseOverhead = `(${sizeVal}${sizeUnit.value} × 8b/B) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100 = ${overheadFactor.toFixed(2)}))`;
-    const handshakeFormula = protocol === 'TCP' ? `(2 × ${latencyVal}ms / 1000 = ${handshakeSec.toFixed(2)}s) + ` : '';
+    const handshakeFormula = protocol === 'TCP'
+      ? `(2 × ${latencyVal}ms / 1000 = ${handshakeSec.toFixed(2)}s) + `
+      : '';
     const formulaRaw = `Formula: ${handshakeFormula}${baseRaw} = ${timeSecRaw.toFixed(2)} seconds`;
     const formulaOverhead = `Formula: ${handshakeFormula}${baseOverhead} = ${timeSecOverhead.toFixed(2)} seconds`;
 
-    const handshakeBlock = protocol === 'TCP'
-      ? `<div class="result-item">
-           <h3>TCP Handshake Time:</h3>
-           <p>${handshakeSec.toFixed(2)} seconds</p>
-           <p class="formula">Formula: 2 × ${latencyVal}ms / 1000 = ${handshakeSec.toFixed(2)}s</p>
-         </div>`
-      : '';
-
     resultDiv.innerHTML = `
-      ${handshakeBlock}
       <div class="result-item">
         <h3>Transfer Time Without Overhead:</h3>
         <p>${timeStrRaw}</p>
