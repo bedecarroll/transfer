@@ -99,7 +99,7 @@ button:hover {
   font-size: 1.4rem;
 }
 .primary-result p {
-  font-weight: bold;
+  font-weight: normal;
 }
 /* Style for formula description below the result */
 .result-item .formula {
