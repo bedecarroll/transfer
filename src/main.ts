@@ -221,7 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataSecRaw = bits / rawBps;
     const bpsWithOverhead = rawBps * (1 - overheadVal / 100);
     const dataSecOverhead = bits / bpsWithOverhead;
-    const handshakeSec = protocol === 'TCP' ? (latencyVal / 1000) * 2 : 0;
+    const rttSec = latencyVal / 1000;
+    const handshakeSec = protocol === 'TCP' ? rttSec * 2 : 0;
+    const bdpBits = rawBps * rttSec;
+    const bdpBytes = bdpBits / 8;
     const timeSecRaw = handshakeSec + dataSecRaw;
     const timeSecOverhead = handshakeSec + dataSecOverhead;
 
@@ -247,6 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Transfer Time With Overhead:</h3>
         <p>${timeStrOverhead}</p>
         <p class="formula">${formulaOverhead}</p>
+      </div>
+      <div class="result-item">
+        <h3>Bandwidth-Delay Product:</h3>
+        <p>${bdpBits.toLocaleString()} bits (${bdpBytes.toLocaleString()} bytes)</p>
+        <p class="formula">Formula: ${bwVal}${bwUnit.value} × ${latencyVal}ms / 1000 = ${bdpBits.toFixed(0)} bits</p>
+      </div>
+      <div class="result-item">
+        <h3>Minimum TCP Window Size:</h3>
+        <p>${bdpBytes.toLocaleString()} bytes</p>
+        <p class="formula">Formula: ${bdpBits.toFixed(0)} bits ÷ 8 = ${bdpBytes.toFixed(0)} bytes</p>
       </div>`;
   });
 

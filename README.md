@@ -66,6 +66,7 @@ transferWithOverheadSeconds (s) = sizeBits (b) ÷ effectiveBandwidth (b/s)
 
 totalWithoutOverhead (s) = handshakeSeconds (s) + transferSeconds (s)
 totalWithOverhead (s) = handshakeSeconds (s) + transferWithOverheadSeconds (s)
+bandwidthDelayProduct (b) = bandwidthBps (b/s) × latencyMilliseconds (ms) / 1000
 ```
 
 The generic forms above show the units for each term. ``latencyMilliseconds`` is provided by the user in **ms** and the resulting ``handshakeSeconds`` is in **seconds**. The overhead percentage reduces available bandwidth by the factor ``(1 - overheadPercent / 100)`` before computing the transfer duration.
@@ -74,6 +75,9 @@ The generic forms above show the units for each term. ``latencyMilliseconds`` is
 When a protocol overhead percentage (for example 3%) is provided, the bandwidth
 is multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time.
 Handshake time applies only to TCP and depends on the round-trip latency.
+The Bandwidth-Delay Product (BDP) expresses how many bits can fill the
+pipeline at once: `bandwidthBps × latencySeconds`. The calculator displays the
+BDP and the equivalent minimum TCP receive window.
 
 ### Manual Calculation Example
 
