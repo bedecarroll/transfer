@@ -79,8 +79,8 @@
                 </div>
                 <div class="input-section">
                     <label for="loss-input">Packet loss (%):</label>
-                    <input type="number" id="loss-input" value="0" min="0" max="100" step="any" aria-describedby="loss-help">
-                    <div id="loss-help" class="sr-only">Packet loss percentage used for the Mathis throughput formula.</div>
+                    <input type="number" id="loss-input" value="0.001" min="0" max="100" step="any" aria-describedby="loss-help">
+                    <div id="loss-help" class="sr-only">Packet loss percentage used for the Mathis throughput formula. Default is 0.001%.</div>
                 </div>
                 <div class="input-section">
                     <label for="rwnd-input">TCP window size (bytes):</label>
