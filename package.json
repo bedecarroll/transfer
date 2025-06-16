@@ -5,7 +5,7 @@
   "devDependencies": {
     "typescript": "^5.0.0"
   },
-  "description": "A simple static website for calculating theoretical transfer times based on file size and bandwidth",
+  "description": "A static website for calculating theoretical transfer times and advanced TCP metrics based on file size and bandwidth",
   "scripts": {
     "build": "tsc && rm -rf public && mkdir -p public && cp index.html styles.css public/ && cp -r dist public/",
     "dev": "tsc --watch",
