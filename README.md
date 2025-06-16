@@ -1,7 +1,7 @@
  # Transfer Time Calculator
 
 A static website for calculating theoretical transfer times and advanced TCP metrics based on file size,
-bandwidth and network protocol (TCP or UDP).
+bandwidth and network protocol (TCP or UDP). Hover over the question mark icons next to each result for a brief explanation of that metric.
 
  ## Prerequisites
  - bun (>=0.6.0) or Node.js (>=14)
@@ -51,6 +51,7 @@ bandwidth and network protocol (TCP or UDP).
    calculate the TCP handshake when applicable.
 6. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP or MPLS to override the automatic value.
 7. Click **Calculate** to see the estimated transfer time.
+8. Hover over the question mark icons next to each result for an explanation of what the metric represents.
 
 ## Formulas
 
