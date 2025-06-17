@@ -61,6 +61,11 @@
                     <div id="extra-bytes-help" class="sr-only">Additional bytes to add on top of the selected preset.</div>
                 </div>
                 <div class="input-section">
+                    <label for="mtu-input">MTU (bytes):</label>
+                    <input type="number" id="mtu-input" value="1500" min="0" step="any" aria-describedby="mtu-help">
+                    <div id="mtu-help" class="sr-only">Maximum Transmission Unit, default 1500 bytes.</div>
+                </div>
+                <div class="input-section">
                     <label for="loss-input">Packet loss (%):</label>
                     <input type="number" id="loss-input" value="0.001" min="0" max="100" step="any" aria-describedby="loss-help">
                     <div id="loss-help" class="sr-only">Packet loss percentage used for the Mathis throughput formula. Default is 0.001%.</div>
