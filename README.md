@@ -1,7 +1,6 @@
  # Transfer Time Calculator
 
-A static website for calculating theoretical transfer times and advanced TCP metrics based on file size,
-bandwidth and network protocol (TCP or UDP). Hover over the question mark icons next to each result for a brief explanation of that metric.
+A static website for calculating theoretical transfer times. TCP-specific metrics are displayed only when using TCP presets, and the MTU can be adjusted from its default of 1500 bytes. Hover over the question mark icons next to each result for a brief explanation of that metric.
 
  ## Prerequisites
  - bun (>=0.6.0) or Node.js (>=14)
@@ -45,11 +44,12 @@ bandwidth and network protocol (TCP or UDP). Hover over the question mark icons 
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
 4. (Optional) Enter the round-trip latency in milliseconds.
-5. (Optional) Pick an overhead preset (defaults to **Ethernet IPv4/TCP**) such as MPLS or VXLAN.
-6. (Optional) Add extra header bytes on top of the chosen preset. The resulting overhead percentage updates automatically.
-7. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
-8. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
-9. Hover over the question mark icons next to each result for an explanation of what the metric represents.
+5. (Optional) Specify the MTU in bytes (default **1500**) if your network uses jumbo frames.
+6. (Optional) Pick an overhead preset (defaults to **Ethernet IPv4/TCP**) such as MPLS or VXLAN.
+7. (Optional) Add extra header bytes on top of the chosen preset. The resulting overhead percentage updates automatically.
+8. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
+9. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
+10. Hover over the question mark icons next to each result for an explanation of what the metric represents.
 
 ## Formulas
 

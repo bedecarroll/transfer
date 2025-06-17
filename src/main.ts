@@ -42,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
   const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
   const extraBytesInput = document.getElementById('extra-bytes-input') as HTMLInputElement;
+  const mtuInput = document.getElementById('mtu-input') as HTMLInputElement;
   let overheadPercent = 0;
+  let mtu = parseFloat(mtuInput.value) || 1500;
+  let isUdp = false;
   const lossInput = document.getElementById('loss-input') as HTMLInputElement;
   const rwndInput = document.getElementById('rwnd-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
@@ -62,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stack?: HeaderLayer[];
   }
 
-  const MTU = 1500;
 
   const PRESETS: OverheadPreset[] = [
     {
@@ -171,18 +173,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateOverheadForSelection(): void {
     const index = parseInt(presetSelect.value, 10);
     const extra = parseFloat(extraBytesInput.value) || 0;
+    mtu = parseFloat(mtuInput.value) || 1500;
     if (!isNaN(index) && PRESETS[index]) {
       const p = PRESETS[index];
-      overheadPercent = ((p.bytes + extra) / MTU) * 100;
+      overheadPercent = ((p.bytes + extra) / mtu) * 100;
       renderHeaderStack(p.stack);
+      isUdp = p.stack ? p.stack.some((l) => /UDP/i.test(l.name)) : false;
     } else {
-      overheadPercent = extra > 0 ? (extra / MTU) * 100 : 0;
+      overheadPercent = extra > 0 ? (extra / mtu) * 100 : 0;
       renderHeaderStack(undefined);
+      isUdp = false;
     }
   }
 
   presetSelect.addEventListener('change', updateOverheadForSelection);
   extraBytesInput.addEventListener('input', updateOverheadForSelection);
+  mtuInput.addEventListener('input', updateOverheadForSelection);
 
 
   function showError(msg: string): void {
@@ -249,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const helpIcon = (desc: string) => `<span class="help-icon" title="${desc}">?</span>`;
 
-    resultDiv.innerHTML = `
+    let html = `
       <div class="result-item primary-result">
         <h3>Minimum Transfer Time: ${helpIcon('File size divided by expected maximum throughput.')}</h3>
         <p>${timeStrExpected}</p>
@@ -269,7 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Bandwidth-Delay Product: ${helpIcon('Bandwidth-Delay Product (BDP) = bandwidth × latency.')}</h3>
         <p>${bdpBits.toLocaleString()} bits (${bdpBytes.toLocaleString()} bytes)</p>
         <p class="formula">Formula: ${bwVal}${bwUnit.value} × ${latencyVal}ms / 1000 = ${bdpBits.toFixed(0)} bits</p>
-      </div>
+      </div>`;
+
+    if (!isUdp) {
+      html += `
       <div class="result-item">
         <h3>Minimum TCP Window Size: ${helpIcon('Minimum TCP Receive Window (BDP / 8).')}</h3>
         <p>${bdpBytes.toLocaleString()} bytes</p>
@@ -295,6 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>${fmtMbps(expectedBps)}</p>
         <p class="formula">${formulaExpectedBps}</p>
       </div>`;
+    }
+
+    resultDiv.innerHTML = html;
   });
 
   function updateThemeIcon(isDark: boolean): void {
