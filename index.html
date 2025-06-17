@@ -57,11 +57,6 @@
                     <div id="latency-help" class="sr-only">Round-trip latency in milliseconds.</div>
                 </div>
                 <div class="input-section">
-                    <label for="overhead-input">Protocol overhead (%):</label>
-                    <input type="number" id="overhead-input" placeholder="0" min="0" max="100" step="any" aria-describedby="overhead-help">
-                    <div id="overhead-help" class="sr-only">Enter protocol overhead percentage. Adjust the preset or extra bytes to update this value automatically.</div>
-                </div>
-                <div class="input-section">
                     <label for="extra-bytes-input">Extra header bytes:</label>
                     <input type="number" id="extra-bytes-input" value="0" min="0" step="any" aria-describedby="extra-bytes-help">
                     <div id="extra-bytes-help" class="sr-only">Additional bytes to add on top of the selected preset.</div>
@@ -76,9 +71,12 @@
                     <input type="number" id="rwnd-input" value="16777216" min="0" step="any" aria-describedby="rwnd-help">
                     <div id="rwnd-help" class="sr-only">Receiver window size used to determine throughput limits.</div>
                 </div>
-                <div class="input-section" style="display: flex; gap: 10px; align-items: center;">
-                    <label for="preset-select" class="sr-only">Overhead Preset</label>
-                    <select id="preset-select" style="flex:1;"></select>
+                <div class="input-section">
+                    <h4>Overhead Preset:</h4>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label for="preset-select" class="sr-only">Overhead Preset</label>
+                        <select id="preset-select" style="flex:1;"></select>
+                    </div>
                 </div>
                 <div id="header-stack" class="header-stack" aria-live="polite"></div>
             </details>
