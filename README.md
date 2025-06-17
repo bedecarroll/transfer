@@ -45,7 +45,7 @@ bandwidth and network protocol (TCP or UDP). Hover over the question mark icons 
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
 4. (Optional) Enter the round-trip latency in milliseconds.
-5. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP, MPLS or VXLAN.
+5. (Optional) Pick an overhead preset (defaults to **Ethernet IPv4/TCP**) such as MPLS or VXLAN.
 6. (Optional) Add extra header bytes on top of the chosen preset. The resulting overhead percentage updates automatically.
 7. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
 8. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
