@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
       opt.textContent = p.name;
       presetSelect.appendChild(opt);
     });
+    presetSelect.value = '0';
   }
 
   function renderHeaderStack(stack: HeaderLayer[] | undefined): void {
@@ -318,6 +319,5 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTheme();
   bindThemeToggle();
   refreshPresetSelect();
-  renderHeaderStack(undefined);
   updateOverheadForSelection();
 });
