@@ -49,8 +49,7 @@
                 </div>
                 <div id="bandwidth-help" class="sr-only">Enter bandwidth and select unit.</div>
             </div>
-            <details id="advanced-section">
-                <summary>Advanced Options</summary>
+            <div id="advanced-section">
                 <div class="input-section">
                     <label for="latency-input">Latency (ms):</label>
                     <input type="number" id="latency-input" value="10" min="0" step="any" aria-describedby="latency-help">
@@ -72,14 +71,11 @@
                     <div id="rwnd-help" class="sr-only">Receiver window size used to determine throughput limits.</div>
                 </div>
                 <div class="input-section">
-                    <h4>Overhead Preset:</h4>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <label for="preset-select" class="sr-only">Overhead Preset</label>
-                        <select id="preset-select" style="flex:1;"></select>
-                    </div>
+                    <label for="preset-select">Overhead Preset:</label>
+                    <select id="preset-select"></select>
                 </div>
                 <div id="header-stack" class="header-stack" aria-live="polite"></div>
-            </details>
+            </div>
             <button id="calculate-btn" class="convert-btn" aria-describedby="calculate-help">Calculate</button>
             <div id="calculate-help" class="sr-only">Calculate transfer time</div>
             <div id="result" class="results-section"></div>
