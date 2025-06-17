@@ -40,14 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const sizeUnit = document.getElementById('size-unit') as HTMLSelectElement;
   const bwInput = document.getElementById('bandwidth-input') as HTMLInputElement;
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
-  const protocolSelect = document.getElementById('protocol-select') as HTMLSelectElement;
-  const ipVersionSelect = document.getElementById('ip-version-select') as HTMLSelectElement;
   const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
-  const latencySection = document.getElementById('latency-section') as HTMLDivElement;
-  // Protocol and IP version selections are used for TCP handshake math
-  // and to set a default overhead when no preset is chosen. Changing
-  // either will clear any selected preset so the automatic value updates.
   const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
+  const extraBytesInput = document.getElementById('extra-bytes-input') as HTMLInputElement;
   const lossInput = document.getElementById('loss-input') as HTMLInputElement;
   const rwndInput = document.getElementById('rwnd-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
@@ -63,14 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   interface OverheadPreset {
     name: string;
-    overhead: number;
+    bytes: number;
     stack?: HeaderLayer[];
   }
 
+  const MTU = 1500;
+
   const PRESETS: OverheadPreset[] = [
     {
-      name: 'Ethernet IPv4/TCP (≈3%)',
-      overhead: 3,
+      name: 'Ethernet IPv4/TCP',
+      bytes: 14 + 20 + 20,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -78,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'Ethernet IPv6/TCP (≈4%)',
-      overhead: 4,
+      name: 'Ethernet IPv6/TCP',
+      bytes: 14 + 40 + 20,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -87,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'Ethernet IPv4/UDP (≈2%)',
-      overhead: 2,
+      name: 'Ethernet IPv4/UDP',
+      bytes: 14 + 20 + 8,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -96,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'Ethernet IPv6/UDP (≈3%)',
-      overhead: 3,
+      name: 'Ethernet IPv6/UDP',
+      bytes: 14 + 40 + 8,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv6', bytes: 40 },
@@ -105,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'MPLS VPN (≈5%)',
-      overhead: 5,
+      name: 'MPLS VPN',
+      bytes: 14 + 8 + 20 + 20,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'MPLS x2', bytes: 8 },
@@ -115,8 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'IPsec tunnel (≈12%)',
-      overhead: 12,
+      name: 'IPsec tunnel',
+      bytes: 14 + 20 + 50 + 20,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'IPv4', bytes: 20 },
@@ -125,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     },
     {
-      name: 'L2TP/PPP with IPsec (≈20%)',
-      overhead: 20,
+      name: 'L2TP/PPP with IPsec',
+      bytes: 14 + 8 + 4 + 50 + 20 + 20,
       stack: [
         { name: 'Ethernet', bytes: 14 },
         { name: 'PPP', bytes: 8 },
@@ -134,6 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'IPsec', bytes: 50 },
         { name: 'IPv4', bytes: 20 },
         { name: 'TCP', bytes: 20 },
+      ],
+    },
+    {
+      name: 'VXLAN',
+      bytes: 14 + 20 + 8 + 8 + 14,
+      stack: [
+        { name: 'Ethernet', bytes: 14 },
+        { name: 'IPv4', bytes: 20 },
+        { name: 'UDP', bytes: 8 },
+        { name: 'VXLAN', bytes: 8 },
+        { name: 'Ethernet', bytes: 14 },
       ],
     },
   ];
@@ -159,46 +167,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  presetSelect.addEventListener('change', () => {
+  function updateOverheadForSelection(): void {
     const index = parseInt(presetSelect.value, 10);
+    const extra = parseFloat(extraBytesInput.value) || 0;
     if (!isNaN(index) && PRESETS[index]) {
       const p = PRESETS[index];
-      overheadInput.value = String(p.overhead);
+      const percent = ((p.bytes + extra) / MTU) * 100;
+      overheadInput.value = percent.toFixed(2);
       renderHeaderStack(p.stack);
     } else {
-      renderHeaderStack(undefined);
-      updateDefaultOverhead();
-    }
-  });
-
-  function updateDefaultOverhead(): void {
-    if (presetSelect.value !== '') return;
-    const isIPv6 = ipVersionSelect.value === 'IPv6';
-    const isTCP = protocolSelect.value === 'TCP';
-    const presetName = `Ethernet ${isIPv6 ? 'IPv6' : 'IPv4'}/${isTCP ? 'TCP' : 'UDP'}`;
-    const preset = PRESETS.find((p) => p.name.startsWith(presetName));
-    if (preset) {
-      overheadInput.value = String(preset.overhead);
-      renderHeaderStack(preset.stack);
-    } else {
+      const percent = extra > 0 ? (extra / MTU) * 100 : 0;
+      overheadInput.value = percent > 0 ? percent.toFixed(2) : '';
       renderHeaderStack(undefined);
     }
   }
 
-  function toggleLatencySection(): void {
-    const isTCP = protocolSelect.value === 'TCP';
-    latencySection.style.display = isTCP ? 'block' : 'none';
-  }
+  presetSelect.addEventListener('change', updateOverheadForSelection);
+  extraBytesInput.addEventListener('input', updateOverheadForSelection);
 
-  protocolSelect.addEventListener('change', () => {
-    presetSelect.value = '';
-    toggleLatencySection();
-    updateDefaultOverhead();
-  });
-  ipVersionSelect.addEventListener('change', () => {
-    presetSelect.value = '';
-    updateDefaultOverhead();
-  });
 
   function showError(msg: string): void {
     resultDiv.innerHTML = `<div class="result-item"><h3>Error:</h3><p>${msg}</p></div>`;
@@ -207,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
   calcBtn.addEventListener('click', () => {
     const sizeVal = parseFloat(sizeInput.value);
     const bwVal = parseFloat(bwInput.value);
-    const protocol = protocolSelect.value;
     const latencyVal = parseFloat(latencyInput.value) || 0;
     const overheadVal = parseFloat(overheadInput.value) || 0;
     const lossVal = parseFloat(lossInput.value) || 0;
@@ -226,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bpsWithOverhead = rawBps * (1 - overheadVal / 100);
     const dataSecOverhead = bits / bpsWithOverhead;
     const rttSec = latencyVal / 1000;
-    const handshakeSec = protocol === 'TCP' ? rttSec * 2 : 0;
+    const handshakeSec = 0;
     const bdpBits = rawBps * rttSec;
     const bdpBytes = bdpBits / 8;
     const lossRate = lossVal / 100;
@@ -246,9 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseRaw = `(${sizeVal}${sizeUnit.value} × 8b/B) ÷ (${bwVal}${bwUnit.value})`;
     const overheadFactor = 1 - overheadVal / 100;
     const baseOverhead = `(${sizeVal}${sizeUnit.value} × 8b/B) ÷ (${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100 = ${overheadFactor.toFixed(2)}))`;
-    const handshakeFormula = protocol === 'TCP'
-      ? `(2 × ${latencyVal}ms / 1000 = ${handshakeSec.toFixed(2)}s) + `
-      : '';
+    const handshakeFormula = '';
     const formulaRaw = `Formula: ${handshakeFormula}${baseRaw} = ${timeSecRaw.toFixed(2)} seconds`;
     const formulaOverhead = `Formula: ${handshakeFormula}${baseOverhead} = ${timeSecOverhead.toFixed(2)} seconds`;
     const formulaOverheadBps = `Formula: ${bwVal}${bwUnit.value} × (1 - ${overheadVal}/100 = ${overheadFactor.toFixed(2)})`;
@@ -274,12 +257,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <p class="formula">${formulaMinTime} = ${timeSecExpected.toFixed(2)} seconds</p>
       </div>
       <div class="result-item">
-        <h3>Transfer Time Without Overhead: ${helpIcon('Simple transfer time without protocol overhead or handshake.')}</h3>
+        <h3>Transfer Time Without Overhead: ${helpIcon('Simple transfer time without protocol overhead.')}</h3>
         <p>${timeStrRaw}</p>
         <p class="formula">${formulaRaw}</p>
       </div>
       <div class="result-item">
-        <h3>Transfer Time With Overhead: ${helpIcon('Transfer time including protocol overhead and handshake delay.')}</h3>
+        <h3>Transfer Time With Overhead: ${helpIcon('Transfer time including protocol overhead.')}</h3>
         <p>${timeStrOverhead}</p>
         <p class="formula">${formulaOverhead}</p>
       </div>
@@ -338,6 +321,5 @@ document.addEventListener('DOMContentLoaded', () => {
   bindThemeToggle();
   refreshPresetSelect();
   renderHeaderStack(undefined);
-  toggleLatencySection();
-  updateDefaultOverhead();
+  updateOverheadForSelection();
 });
