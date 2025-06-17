@@ -46,7 +46,7 @@ bandwidth and network protocol (TCP or UDP). Hover over the question mark icons 
 3. Enter a bandwidth value and select its unit.
 4. (Optional) Enter the round-trip latency in milliseconds.
 5. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP, MPLS or VXLAN.
-6. (Optional) Add extra header bytes on top of the chosen preset.
+6. (Optional) Add extra header bytes on top of the chosen preset. The resulting overhead percentage updates automatically.
 7. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
 8. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
 9. Hover over the question mark icons next to each result for an explanation of what the metric represents.
@@ -77,9 +77,8 @@ The generic forms above show the units for each term. ``latencyMilliseconds`` is
 ``maxLossThroughput`` uses the Mathis et al. formula with a fixed MSS of 1460 bytes and the packet loss probability provided by the user. ``maxWindowThroughput`` depends on the configured TCP receive window.
 
 
-When a protocol overhead percentage (for example 3%) is provided, the bandwidth
-is multiplied by `(1 - 3/100 = 0.97)` before computing the transfer time.
-Handshake time applies only to TCP and depends on the round-trip latency.
+When protocol overhead is applied (derived from header bytes), the bandwidth
+is multiplied by `(1 - overheadPercent/100)` before computing the transfer time.
 The Bandwidth-Delay Product (BDP) expresses how many bits can fill the
 pipeline at once: `bandwidthBps × latencySeconds`. The calculator displays the
 BDP and the equivalent minimum TCP receive window.

@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const bwInput = document.getElementById('bandwidth-input') as HTMLInputElement;
   const bwUnit = document.getElementById('bandwidth-unit') as HTMLSelectElement;
   const latencyInput = document.getElementById('latency-input') as HTMLInputElement;
-  const overheadInput = document.getElementById('overhead-input') as HTMLInputElement;
   const extraBytesInput = document.getElementById('extra-bytes-input') as HTMLInputElement;
+  let overheadPercent = 0;
   const lossInput = document.getElementById('loss-input') as HTMLInputElement;
   const rwndInput = document.getElementById('rwnd-input') as HTMLInputElement;
   const presetSelect = document.getElementById('preset-select') as HTMLSelectElement;
@@ -172,12 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const extra = parseFloat(extraBytesInput.value) || 0;
     if (!isNaN(index) && PRESETS[index]) {
       const p = PRESETS[index];
-      const percent = ((p.bytes + extra) / MTU) * 100;
-      overheadInput.value = percent.toFixed(2);
+      overheadPercent = ((p.bytes + extra) / MTU) * 100;
       renderHeaderStack(p.stack);
     } else {
-      const percent = extra > 0 ? (extra / MTU) * 100 : 0;
-      overheadInput.value = percent > 0 ? percent.toFixed(2) : '';
+      overheadPercent = extra > 0 ? (extra / MTU) * 100 : 0;
       renderHeaderStack(undefined);
     }
   }
@@ -194,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sizeVal = parseFloat(sizeInput.value);
     const bwVal = parseFloat(bwInput.value);
     const latencyVal = parseFloat(latencyInput.value) || 0;
-    const overheadVal = parseFloat(overheadInput.value) || 0;
+    const overheadVal = overheadPercent;
     const lossVal = parseFloat(lossInput.value) || 0;
     const rwndVal = parseFloat(rwndInput.value) || 0;
     if (isNaN(sizeVal) || sizeVal <= 0) {
