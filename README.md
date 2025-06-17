@@ -44,12 +44,9 @@ bandwidth and network protocol (TCP or UDP). Hover over the question mark icons 
 1. Open the web UI in your browser.
 2. Enter a file size and select its unit.
 3. Enter a bandwidth value and select its unit.
-4. Choose a protocol (TCP or UDP). If TCP is selected, provide the round-trip latency in milliseconds so handshake time is added to the total transfer time.
-5. Select the IP version (IPv4 or IPv6). When no overhead preset is selected, the overhead field updates automatically for the chosen protocol and IP version.
-   Changing either the protocol or IP version clears the preset selection so the
-   defaults take effect. The protocol and IP version inputs are also used to
-   calculate the TCP handshake when applicable.
-6. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP or MPLS to override the automatic value.
+4. (Optional) Enter the round-trip latency in milliseconds.
+5. (Optional) Pick an overhead preset such as Ethernet IPv4/TCP, MPLS or VXLAN.
+6. (Optional) Add extra header bytes on top of the chosen preset.
 7. (Optional) Adjust packet loss (default **0.001&nbsp;%**) and the TCP window size to see throughput limits.
 8. Click **Calculate** to see the minimum transfer time followed by the metrics used to derive it.
 9. Hover over the question mark icons next to each result for an explanation of what the metric represents.
@@ -61,13 +58,12 @@ The calculation uses the following formulas. In these expressions all file sizes
 ```
 sizeBits (b) = fileSize × 8
 bandwidthBps (b/s) = bandwidth
-handshakeSeconds (s) = protocol == TCP ? 2 × latencyMilliseconds (ms) / 1000 : 0
 transferSeconds (s) = sizeBits (b) ÷ bandwidthBps (b/s)
 effectiveBandwidth (b/s) = bandwidthBps (b/s) × (1 - overheadPercent / 100)
 transferWithOverheadSeconds (s) = sizeBits (b) ÷ effectiveBandwidth (b/s)
 
-totalWithoutOverhead (s) = handshakeSeconds (s) + transferSeconds (s)
-totalWithOverhead (s) = handshakeSeconds (s) + transferWithOverheadSeconds (s)
+totalWithoutOverhead (s) = transferSeconds (s)
+totalWithOverhead (s) = transferWithOverheadSeconds (s)
 bandwidthDelayProduct (b) = bandwidthBps (b/s) × latencyMilliseconds (ms) / 1000
 maxOverheadThroughput (b/s) = effectiveBandwidth (b/s)
 maxLossThroughput (b/s) = 1.22 × MSSBytes × 8 ÷ (latencySeconds × sqrt(packetLoss))
@@ -76,7 +72,7 @@ expectedThroughput (b/s) = min(bandwidthBps, maxOverheadThroughput, maxLossThrou
 minimumTransferTime (s) = sizeBits ÷ expectedThroughput
 ```
 
-The generic forms above show the units for each term. ``latencyMilliseconds`` is provided by the user in **ms** and the resulting ``handshakeSeconds`` is in **seconds**. The overhead percentage reduces available bandwidth by the factor ``(1 - overheadPercent / 100)`` before computing the transfer duration.
+The generic forms above show the units for each term. ``latencyMilliseconds`` is provided by the user in **ms**. The overhead percentage reduces available bandwidth by the factor ``(1 - overheadPercent / 100)`` before computing the transfer duration.
 
 ``maxLossThroughput`` uses the Mathis et al. formula with a fixed MSS of 1460 bytes and the packet loss probability provided by the user. ``maxWindowThroughput`` depends on the configured TCP receive window.
 
@@ -97,26 +93,24 @@ Assume a **1&nbsp;GB** file is sent over a **100&nbsp;Mbps** TCP link with
 1. **Convert units**
    - `sizeBits = 1 GB × 8 = 8,000,000,000`
    - `bandwidthBps = 100 Mbps = 100,000,000`
-2. **Handshake time (TCP only)**
-   - `handshakeSeconds = 2 × 50 ms / 1000 = 0.1`
-3. **Effective bandwidth**
+2. **Effective bandwidth**
    - `effectiveBandwidth = 100,000,000 × (1 - 3/100 = 0.97) = 97,000,000`
-4. **Without overhead**
+3. **Without overhead**
    - `transferSeconds = sizeBits ÷ bandwidthBps = 8,000,000,000 ÷ 100,000,000 = 80`
-   - `totalWithoutOverhead = handshakeSeconds + transferSeconds = 80.1`
-5. **With overhead**
+   - `totalWithoutOverhead = transferSeconds = 80`
+4. **With overhead**
    - `transferWithOverheadSeconds = sizeBits ÷ effectiveBandwidth = 8,000,000,000 ÷ 97,000,000 ≈ 82.47`
-   - `totalWithOverhead = handshakeSeconds + transferWithOverheadSeconds ≈ 82.57`
+   - `totalWithOverhead = transferWithOverheadSeconds ≈ 82.47`
 
-6. **Bandwidth-Delay Product and Minimum Window**
+5. **Bandwidth-Delay Product and Minimum Window**
    - `bdpBits = bandwidthBps × latencySeconds = 100,000,000 × 0.05 = 5,000,000`
    - `bdpBytes = bdpBits ÷ 8 = 625,000`
-7. **Throughput Limits** (assume `0.001 %` packet loss and a `16 MiB` TCP window)
+6. **Throughput Limits** (assume `0.001 %` packet loss and a `16 MiB` TCP window)
    - `maxOverheadThroughput = effectiveBandwidth = 97,000,000`
    - `maxLossThroughput = 1.22 × 1460 × 8 ÷ (0.05 × √0.00001) ≈ 90,000,000`
    - `maxWindowThroughput = 16,777,216 × 8 ÷ 0.05 ≈ 2,684,354,560`
    - `expectedThroughput = min(100,000,000, 97,000,000, 90,000,000, 2,684,354,560) = 90,000,000`
-8. **Minimum Transfer Time**
+7. **Minimum Transfer Time**
    - `minimumTransferTime = sizeBits ÷ expectedThroughput = 8,000,000,000 ÷ 90,000,000 ≈ 88.9`
 
 So the transfer takes about **80 seconds** without overhead and roughly
